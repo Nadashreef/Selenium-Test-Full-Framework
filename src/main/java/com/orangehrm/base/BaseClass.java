@@ -86,17 +86,17 @@ public class BaseClass {
 
 		if (browser.equalsIgnoreCase("chrome")) {
 			//driver = new ChromeDriver();
-			// Create ChromeOptions
-			//ChromeOptions options = new ChromeOptions();
+		//Create ChromeOptions
+			ChromeOptions options = new ChromeOptions();
 			//options.addArguments("--headless"); // Run Chrome in headless mode
-			//options.addArguments("--disable-gpu"); // Disable GPU for headless mode
-			//options.addArguments("--window-size=1920,1080"); // Set window size
-			//options.addArguments("--disable-notifications"); // Disable browser notifications
-			//options.addArguments("--no-sandbox"); // Required for some CI environments like Jenkins
-			//options.addArguments("--disable-dev-shm-usage"); // Resolve issues in resource-limited environments
+			options.addArguments("--disable-gpu"); // Disable GPU for headless mode
+			options.addArguments("--window-size=1920,1080"); // Set window size
+			options.addArguments("--disable-notifications"); // Disable browser notifications
+			options.addArguments("--no-sandbox"); // Required for some CI environments like Jenkins
+			options.addArguments("--disable-dev-shm-usage"); // Resolve issues in resource-limited environments
+		
 			
-			
-			driver.set(new ChromeDriver()); //New changes as per thread
+			driver.set(new ChromeDriver(options)); //New changes as per thread
 			ExtentManager.registerDriver(getDriver());
 			logger.info("ChromeDriver initialized");
 		} else if (browser.equalsIgnoreCase("firefox")) {

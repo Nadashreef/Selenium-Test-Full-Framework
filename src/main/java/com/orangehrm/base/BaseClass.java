@@ -135,7 +135,7 @@ public class BaseClass {
 			
 			// Create FirefoxOptions
 			FirefoxOptions options = new FirefoxOptions();
-			//options.addArguments("--headless"); // Run Firefox in headless mode
+			options.addArguments("--headless"); // Run Firefox in headless mode
 			options.addArguments("--disable-gpu"); // Disable GPU rendering (useful for headless mode)
 			options.addArguments("--width=1920"); // Set browser width
 			options.addArguments("--height=1080"); // Set browser height
@@ -172,17 +172,23 @@ public class BaseClass {
 	private void configureBrowser() {
 		// Implicit Wait
 		int implicitrWait = Integer.parseInt(prop.getProperty("implicitWait"));
+		boolean seleniumGrid = Boolean.parseBoolean(System.getProperty("seleniumGrid", prop.getProperty("seleniumGrid")));
 		getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(implicitrWait));
 
 		// maximize the driver
 		getDriver().manage().window().maximize();
 
 		// Navigate to URL
-		try {
+		/*try {
 			getDriver().get(prop.getProperty("url"));
 		} catch (Exception e) {
 			System.out.println("Failed to Navigate the URL:" + e.getMessage());
 
+		}*/
+		if (seleniumGrid) {
+			getDriver().get(prop.getProperty("url_grid"));
+		} else {
+			getDriver().get(prop.getProperty("url_local"));
 		}
 	}
 

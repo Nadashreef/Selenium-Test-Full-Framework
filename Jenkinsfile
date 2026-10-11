@@ -15,8 +15,7 @@ pipeline {
             steps {
                 script {
                     echo "Starting Selenium Grid with Docker Compose..."   
-					bat '"C:\\Users\\AGN\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" --version'
-					bat '"C:\\Users\\AGN\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" compose version'
+					bat '"C:\\Users\\AGN\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" compose -f "${WORKSPACE}\\docker\\docker-compose.yml" up -d'
                     echo "Waiting for Selenium Grid to be ready..."
                     sleep 30 // Add a wait if needed
                 }
@@ -45,7 +44,7 @@ pipeline {
             steps {
                 script {
                     echo "Stopping Selenium Grid..."
-                    bat 'cd /d "%WORKSPACE%" && "C:\\Users\\AGN\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" compose -f "docker\\docker-compose.yml" down'
+                    bat '"C:\\Users\\AGN\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker-compose.exe" -f "%WORKSPACE%\\docker\\docker-compose.yml" down'
                 }
             }
         }

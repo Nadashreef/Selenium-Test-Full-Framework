@@ -74,7 +74,7 @@ public class ExtentManager {
 
 	// Log a step
 	public static void logStep(String logMessage) {
-		getTest().info("logMessage");
+		getTest().info(logMessage);
 	}
 
 	// Log a step validation with screenshot

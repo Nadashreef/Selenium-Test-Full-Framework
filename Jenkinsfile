@@ -1,12 +1,13 @@
+
 pipeline {
-    agent any  
+    agent any
 
     tools {
-        maven 'maven-3.10.0' 
+        maven 'maven-3.10.0'
     }
 
     environment {
-        COMPOSE_PATH = "${WORKSPACE}/docker" // 🔁 Adjust if compose file is elsewhere
+        COMPOSE_PATH = "${WORKSPACE}/docker"
         SELENIUM_GRID = "true"
     }
 
@@ -14,17 +15,20 @@ pipeline {
         stage('Start Selenium Grid via Docker Compose') {
             steps {
                 script {
-                    echo "Starting Selenium Grid with Docker Compose..."   
-					bat '"C:\\Users\\AGN\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" compose -f "${WORKSPACE}\\docker\\docker-compose.yml" up -d'
+                    echo "Starting Selenium Grid with Docker Compose..."
+
+                    bat '"C:\\Users\\AGN\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker-compose.exe" -f "%WORKSPACE%\\docker\\docker-compose.yml" up -d'
+
                     echo "Waiting for Selenium Grid to be ready..."
-                    sleep 30 // Add a wait if needed
+                    sleep 30
                 }
             }
         }
 
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Nadashreef/Selenium-Test-Full-Framework.git'
+                git branch: 'main',
+                    url: 'https://github.com/Nadashreef/Selenium-Test-Full-Framework.git'
             }
         }
 
@@ -36,7 +40,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                bat "mvn clean test -DseleniumGrid=true"
+                bat 'mvn clean test -DseleniumGrid=true'
             }
         }
 
@@ -44,6 +48,7 @@ pipeline {
             steps {
                 script {
                     echo "Stopping Selenium Grid..."
+
                     bat '"C:\\Users\\AGN\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker-compose.exe" -f "%WORKSPACE%\\docker\\docker-compose.yml" down'
                 }
             }
@@ -52,8 +57,8 @@ pipeline {
         stage('Reports') {
             steps {
                 publishHTML(target: [
-                    reportDir: 'src/test/resources/ExtentReport',  
-                    reportFiles: 'SparkReport.html',  
+                    reportDir: 'src/test/resources/ExtentReport',
+                    reportFiles: 'SparkReport.html',
                     reportName: 'Extent Report'
                 ])
             }
@@ -62,12 +67,20 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: '**/src/test/resources/ExtentReport/*.html', fingerprint: true
-            junit 'target/surefire-reports/*.xml'
+            archiveArtifacts(
+                artifacts: '**/src/test/resources/ExtentReport/*.html',
+                fingerprint: true,
+                allowEmptyArchive: true
+            )
+
+            junit(
+                testResults: 'target/surefire-reports/*.xml',
+                allowEmptyResults: true
+            )
         }
 
         success {
-            emailext (
+            emailext(
                 to: 'nadashreef14@gmail.com',
                 subject: "Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
@@ -77,9 +90,16 @@ pipeline {
                 <p>The latest Jenkins build has completed successfully.</p>
                 <p><b>Project Name:</b> ${env.JOB_NAME}</p>
                 <p><b>Build Number:</b> #${env.BUILD_NUMBER}</p>
-                <p><b>Build Status:</b> <span style="color: green;"><b>SUCCESS</b></span></p>
-                <p><b>Build URL:</b> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                <p><b>Extent Report:</b> <a href="http://localhost:8080/job/${env.JOB_NAME}/HTML_20Extent_20Report/">Click here</a></p>
+                <p><b>Build Status:</b>
+                   <span style="color: green;"><b>SUCCESS</b></span>
+                </p>
+                <p><b>Build URL:</b>
+                   <a href="${env.BUILD_URL}">${env.BUILD_URL}</a>
+                </p>
+                <p><b>Extent Report:</b>
+                   <a href="http://localhost:8080/job/${env.JOB_NAME}/HTML_20Extent_20Report/">
+                   Click here</a>
+                </p>
                 <p>Best regards,</p>
                 <p><b>Automation Team</b></p>
                 </body>
@@ -91,20 +111,29 @@ pipeline {
         }
 
         failure {
-            emailext (
+            emailext(
                 to: 'nadashreef14@gmail.com',
                 subject: "Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
                 <html>
                 <body>
                 <p>Hello Team,</p>
-                <p>The latest Jenkins build has <b style="color: red;">FAILED</b>.</p>
+                <p>The latest Jenkins build has
+                   <b style="color: red;">FAILED</b>.
+                </p>
                 <p><b>Project Name:</b> ${env.JOB_NAME}</p>
                 <p><b>Build Number:</b> #${env.BUILD_NUMBER}</p>
-                <p><b>Build Status:</b> <span style="color: red;"><b>FAILED &#10060;</b></span></p>
-                <p><b>Build URL:</b> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                <p><b>Build Status:</b>
+                   <span style="color: red;"><b>FAILED &#10060;</b></span>
+                </p>
+                <p><b>Build URL:</b>
+                   <a href="${env.BUILD_URL}">${env.BUILD_URL}</a>
+                </p>
                 <p><b>Please check the logs and take necessary actions.</b></p>
-                <p><b>Extent Report (if available):</b> <a href="http://localhost:8080/job/${env.JOB_NAME}/HTML_20Extent_20Report/">Click here</a></p>
+                <p><b>Extent Report (if available):</b>
+                   <a href="http://localhost:8080/job/${env.JOB_NAME}/HTML_20Extent_20Report/">
+                   Click here</a>
+                </p>
                 <p>Best regards,</p>
                 <p><b>Automation Team</b></p>
                 </body>

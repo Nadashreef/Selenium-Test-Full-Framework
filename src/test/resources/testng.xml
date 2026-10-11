@@ -4,12 +4,7 @@
 	<listeners>
 		<listener class-name="com.orangehrm.listeners.TestListener"></listener>
 	</listeners>
-	<test name="OrangeHRMTest_chrome">
-		<parameter name="browser" value="chrome" />
-		<classes>
-			<class name="com.orangehrm.test.ApiTest" />
-		</classes>
-	</test>
+
 	<test name="OrangeHRMTest_edge">
 		<parameter name="browser" value="edge" />
 		<classes>
